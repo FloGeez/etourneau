@@ -1,0 +1,9 @@
+{
+  "name": "etourneau",
+  "version": "0.2.0",
+  "description": "/etourneau:brand: apply the etourneau brand (the etourneau package), with each design role mapped to its tokens. /etourneau:murmuration: animate the flock and the articulated starling with etourneau/murmuration and etourneau/starling.",
+  "author": {
+    "name": "Florian Etourneau"
+  },
+  "license": "SEE LICENSE IN LICENSE"
+}

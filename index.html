@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>etourneau</title>
+<meta name="description" content="The amethyst starling, as a naturalist's plate: Florian Etourneau's brand and design system, one package per part of the bird.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="tokens/tokens.css">
+<link rel="stylesheet" href="home/plate.css">
+<link rel="icon" href="favicon/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<main class="sheet">
+  <header class="head">
+    <span class="mono">Pl. I</span>
+    <span class="mono">etourneau · brand and design system</span>
+    <a class="mono" href="https://github.com/FloGeez/etourneau">GitHub</a>
+  </header>
+
+  <!-- ——— Plate I: the bird, annotated; each part is a package ——— -->
+  <section class="plate" aria-labelledby="title">
+    <div class="title">
+      <h1 id="title">The amethyst starling</h1>
+      <p class="species"><i>Sturnus etourneaui</i> · one bird, four parts, one package · <code>npm i etourneau</code> <span class="version" data-version></span></p>
+    </div>
+
+    <div class="figure" id="figure" data-part="">
+      <div class="figure-art">
+        <svg class="drawing" id="drawing" viewBox="0 0 1000 640" aria-hidden="true">
+          <path class="wire" id="twig"/>
+          <g id="specimen"></g>
+          <g id="leaders"></g>
+        </svg>
+        <canvas class="flock" id="flock" aria-hidden="true"></canvas>
+      </div>
+      <div class="callouts" role="group" aria-label="The parts of the bird">
+        <button class="callout" type="button" data-part="brand" aria-pressed="false" style="--x: 77.5; --y: 14"><span class="num">i.</span><b lang="fr">La silhouette</b><code>etourneau/logo</code></button>
+        <button class="callout" type="button" data-part="tokens" aria-pressed="false" style="--x: 77.5; --y: 56"><span class="num">ii.</span><b lang="fr">Le plumage</b><code>etourneau/tokens.css</code></button>
+        <button class="callout left" type="button" data-part="starling" aria-pressed="false" style="--x: 22.5; --y: 22"><span class="num">iii.</span><b lang="fr">Le mouvement</b><code>etourneau/starling</code></button>
+        <button class="callout left" type="button" data-part="murmuration" aria-pressed="false" style="--x: 22.5; --y: 66"><span class="num">iv.</span><b lang="fr">La nuée</b><code>etourneau/murmuration</code></button>
+      </div>
+    </div>
+
+    <!-- the specimen's card: the part being looked at; one part is always open, the switch goes to any other -->
+    <aside class="card" id="card">
+      <div class="switch" role="tablist" aria-label="Parts of the bird">
+        <span class="pill" aria-hidden="true"></span>
+        <button type="button" role="tab" id="tab-brand" aria-controls="entry-brand" data-part="brand"><span lang="fr">silhouette</span></button>
+        <button type="button" role="tab" id="tab-tokens" aria-controls="entry-tokens" data-part="tokens"><span lang="fr">plumage</span></button>
+        <button type="button" role="tab" id="tab-starling" aria-controls="entry-starling" data-part="starling"><span lang="fr">mouvement</span></button>
+        <button type="button" role="tab" id="tab-murmuration" aria-controls="entry-murmuration" data-part="murmuration"><span lang="fr">nuée</span></button>
+      </div>
+      <div class="entries">
+      <div class="entry" id="entry-brand" role="tabpanel" aria-labelledby="tab-brand" data-entry="brand">
+        <p class="label">i. <span lang="fr">La silhouette</span></p>
+        <h2><code>etourneau/logo</code></h2>
+        <p>The bird drawn once and kept as files: the logo in six variants, the illustrations (the shot, the flight, the family on the wire), 29 icons, avatars and favicons. Ready for an <code>&lt;img&gt;</code>; their colours follow the tokens.</p>
+        <dl class="facts"><dt>uses</dt><dd>nothing</dd><dt>also</dt><dd><code>/icons</code>, <code>/illustrations</code>, <code>/avatars</code>, <code>/favicon</code></dd></dl>
+        <ul class="links"><li><a href="charte/charte-graphique.html#illustrations">The drawings in the guidelines</a></li><li><a href="charte/charte-graphique.html#pictos">The icons</a></li></ul>
+      </div>
+      <div class="entry" id="entry-tokens" role="tabpanel" aria-labelledby="tab-tokens" data-entry="tokens">
+        <p class="label">ii. <span lang="fr">Le plumage</span></p>
+        <h2><code>etourneau/tokens.css</code></h2>
+        <p>The values the bird is made of, and everything around it: type, spacing, motion. One source, <code>tokens.json</code>, read everywhere as <code>--fe-*</code> variables, in light and in dark.</p>
+        <ul class="chips">
+          <li><span class="chip" style="--c: var(--body)"></span><code>--fe-logo-body</code></li>
+          <li><span class="chip" style="--c: var(--wing)"></span><code>--fe-logo-wing</code></li>
+          <li><span class="chip" style="--c: var(--belly)"></span><code>--fe-logo-belly</code></li>
+          <li><span class="chip" style="--c: var(--beak)"></span><code>--fe-logo-beak</code></li>
+        </ul>
+        <button class="theme" id="theme" type="button" aria-pressed="false"></button>
+        <p class="palette-label">and the rest of the palette</p>
+        <ul class="palette">
+          <li title="--fe-primary"><span style="--c: var(--fe-primary)"></span><span class="sr-only">--fe-primary</span></li>
+          <li title="--fe-focus"><span style="--c: var(--fe-focus)"></span><span class="sr-only">--fe-focus</span></li>
+          <li title="--fe-night"><span style="--c: var(--fe-night)"></span><span class="sr-only">--fe-night</span></li>
+          <li title="--fe-ink"><span style="--c: var(--fe-ink)"></span><span class="sr-only">--fe-ink</span></li>
+          <li title="--fe-breast"><span style="--c: var(--fe-breast)"></span><span class="sr-only">--fe-breast</span></li>
+          <li title="--fe-accent"><span style="--c: var(--fe-accent)"></span><span class="sr-only">--fe-accent</span></li>
+          <li title="--fe-sand-100"><span style="--c: var(--fe-sand-100)"></span><span class="sr-only">--fe-sand-100</span></li>
+          <li title="--fe-sand-300"><span style="--c: var(--fe-sand-300)"></span><span class="sr-only">--fe-sand-300</span></li>
+          <li title="--fe-sand-500"><span style="--c: var(--fe-sand-500)"></span><span class="sr-only">--fe-sand-500</span></li>
+          <li title="--fe-sheen-400"><span style="--c: var(--fe-sheen-400)"></span><span class="sr-only">--fe-sheen-400</span></li>
+          <li title="--fe-success"><span style="--c: var(--fe-success)"></span><span class="sr-only">--fe-success</span></li>
+          <li title="--fe-warning"><span style="--c: var(--fe-warning)"></span><span class="sr-only">--fe-warning</span></li>
+          <li title="--fe-danger"><span style="--c: var(--fe-danger)"></span><span class="sr-only">--fe-danger</span></li>
+        </ul>
+        <dl class="facts"><dt>uses</dt><dd>nothing</dd><dt>also</dt><dd><code>/tokens.json</code>, the source</dd></dl>
+        <ul class="links"><li><a href="charte/charte-graphique.html#couleurs">The colours in the guidelines</a></li></ul>
+      </div>
+      <div class="entry" id="entry-starling" role="tabpanel" aria-labelledby="tab-starling" data-entry="starling">
+        <p class="label">iii. <span lang="fr">Le mouvement</span></p>
+        <h2><code>etourneau/starling</code></h2>
+        <p>Everything the bird does: it raises its wing, turns its head, walks, shoots, flaps and glides, takes off and lands. The same drawing, cut into parts that turn around their pivots (the wing around the shoulder, the head, the legs), with no second drawing: geometry and a little maths, the wing beat in an SVG, one animation loop. No dependency.</p>
+        <dl class="facts"><dt>uses</dt><dd>nothing</dd></dl>
+        <ul class="links"><li><a href="starling/demo.html">Every gesture, in slow motion</a></li></ul>
+      </div>
+      <div class="entry" id="entry-murmuration" role="tabpanel" aria-labelledby="tab-murmuration" data-entry="murmuration">
+        <p class="label">iv. <span lang="fr">La nuée</span></p>
+        <h2><code>etourneau/murmuration</code></h2>
+        <p>Hundreds of small starlings that land on points and draw shapes: here, the bird itself. Point at it: they take off, then land on their place again. The engine is open source, <code>@flogeez/murmuration</code> (MIT, a plain bird); this layer gives it the starling, the purple and the brand's shapes.</p>
+        <dl class="facts"><dt>uses</dt><dd><code>etourneau/starling</code>, <code>@flogeez/murmuration</code></dd></dl>
+        <ul class="links"><li><a href="murmuration/demo.html">The flock in the brand</a></li><li><a href="https://flogeez.github.io/murmuration/demo/">The open-source engine</a></li></ul>
+      </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ——— Beyond the plate: where the starling lives (outside this repository), then the pages of the repository ——— -->
+  <section class="beyond" aria-labelledby="t-beyond">
+    <h2 id="t-beyond">Where the starling lives</h2>
+    <div class="features">
+      <a class="feature" href="https://florian-etourneau.dev">
+        <img src="home/previews/site.jpg" alt="" loading="lazy" width="906" height="487">
+        <span class="tag">Website <span class="away"><svg class="ext" aria-hidden="true"><use href="icons/sprite.svg#fe-externe"/></svg>florian-etourneau.dev</span></span>
+        <b>florian-etourneau.dev</b>
+        <span>Florian's site, where everything is used: the shot, the flight, the family on the wire, the flock along the read.</span>
+      </a>
+      <article class="feature">
+        <a class="cover" href="https://flogeez.github.io/murmuration/demo/"><img src="home/previews/engine.jpg" alt="" loading="lazy" width="906" height="487"></a>
+        <span class="tag">Open source · MIT <span class="away"><svg class="ext" aria-hidden="true"><use href="icons/sprite.svg#fe-externe"/></svg>github.com/FloGeez/murmuration</span></span>
+        <b><a href="https://flogeez.github.io/murmuration/demo/"><code>@flogeez/murmuration</code></a></b>
+        <span>The engine of the flock, outside the brand: a plain bird, or any glyph. Its demo writes a word, draws a line, copies the code.</span>
+        <span class="more"><a href="https://flogeez.github.io/murmuration/demo/">The demo</a> · <a href="https://github.com/FloGeez/murmuration">The source</a></span>
+      </article>
+    </div>
+    <h3 class="sub">In this repository</h3>
+    <div class="pages">
+      <a class="page" href="charte/charte-graphique.html"><img src="home/previews/guidelines.jpg" alt="" loading="lazy" width="906" height="487"><span class="tag">Guidelines · in French</span><b>The brand guidelines</b><span>Colours, type, icons, illustrations, components, the animation script: everything, in one page.</span></a>
+      <a class="page" href="starling/demo.html"><img src="home/previews/starling.jpg" alt="" loading="lazy" width="906" height="487"><span class="tag">Demo · <code>etourneau/starling</code></span><b>The articulated starling</b><span>Every gesture, with slow motion.</span></a>
+      <a class="page" href="murmuration/demo.html"><img src="home/previews/murmuration.jpg" alt="" loading="lazy" width="906" height="487"><span class="tag">Demo · <code>etourneau/murmuration</code></span><b>The flock in the brand</b><span>The starling and the brand's shapes; <code>?debug</code> shows the places.</span></a>
+    </div>
+  </section>
+
+  <footer class="foot"><span class="mono">© Florian Etourneau</span><span class="mono">The identity is all rights reserved, the code is MIT · <a href="https://github.com/FloGeez/etourneau/blob/main/LICENSE">LICENSE</a> · <a href="https://github.com/FloGeez/etourneau/blob/main/STORY.md">STORY</a></span></footer>
+</main>
+
+<!-- Open through a small local server (npm run serve): ES modules do not load over file:// -->
+<script type="importmap">{ "imports": { "@flogeez/murmuration": "./node_modules/@flogeez/murmuration/index.js" } }</script>
+<script type="module" src="home/plate.js"></script>
+</body></html>

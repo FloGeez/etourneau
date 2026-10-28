@@ -1,0 +1,186 @@
+/* The repository's front page, as a naturalist's plate: the starling drawn large and annotated, each part of the bird an entry of the package.
+   Everything comes from the tokens; the plate's codes (a double rule, roman numerals, leader lines) are drawn with them. */
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fe-bg); color: var(--fe-text); font: 400 16px/var(--fe-leading-body) var(--fe-font-heading); }
+a { color: var(--fe-link); text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--fe-focus); outline-offset: 3px; }
+code { font: 500 14px var(--fe-font-code); }
+button { font: inherit; color: inherit; cursor: pointer; }
+h1, h2 { margin: 0; letter-spacing: -.03em; }
+.mono { font: 500 13px var(--fe-font-code); color: var(--fe-text-muted); }
+.num { font: 500 14px var(--fe-font-code); color: var(--fe-accent); }
+[hidden], svg [hidden] { display: none !important; }
+
+/* ——— The sheet: a double rule, like an engraved plate ——— */
+.sheet { width: min(100% - 32px, 1360px); margin: 16px auto; padding: clamp(20px, 3vw, 40px); border: 1px solid var(--fe-border); outline: 1px solid var(--fe-border); outline-offset: 5px; }
+.head { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--fe-border); }
+.head a { text-decoration: none; }
+.head a:hover { color: var(--fe-text); }
+
+/* ——— Plate I ——— */
+.plate { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 420px); grid-template-rows: auto 1fr; gap: 8px clamp(24px, 3vw, 48px); padding-top: clamp(24px, 3vw, 40px); }
+.title { grid-column: 1 / -1; text-align: center; }
+.title h1 { font-size: clamp(40px, 6vw, 80px); font-weight: 800; line-height: 1; }
+.species { margin: 10px 0 0; font: 500 14px var(--fe-font-code); color: var(--fe-text-muted); }
+.species i { font-family: var(--fe-font-heading); font-size: 18px; font-style: italic; color: var(--fe-text); letter-spacing: 0; }
+
+.figure { position: relative; align-self: center; }
+.figure-art { position: relative; aspect-ratio: 1000 / 640; }
+.callouts { position: absolute; inset: 0; pointer-events: none; }
+.callouts .callout { pointer-events: auto; }
+.drawing, .flock { position: absolute; inset: 0; width: 100%; height: 100%; }
+.drawing { overflow: visible; }
+.flock { pointer-events: none; }
+.wire { fill: none; stroke: var(--fe-text); stroke-width: 2; vector-effect: non-scaling-stroke; }
+
+/* the specimen (drawn by plate.js from etourneau/starling); its colours are the tokens, read through --body, --wing…, so that
+   the bird and the card's chips follow the plumage's day / night button together */
+.plate { --body: var(--fe-logo-body); --wing: var(--fe-logo-wing); --belly: var(--fe-logo-belly); --beak: var(--fe-logo-beak); }
+.plate[data-swatch="day"] { --body: var(--fe-light-logo-body); --wing: var(--fe-light-logo-wing); --belly: var(--fe-light-logo-belly); --beak: var(--fe-light-logo-beak); }
+.plate[data-swatch="night"] { --body: var(--fe-dark-logo-body); --wing: var(--fe-dark-logo-wing); --belly: var(--fe-dark-logo-belly); --beak: var(--fe-dark-logo-beak); }
+.fe-corps { fill: var(--body); } .fe-aile { fill: var(--wing); } .fe-ventre, .fe-reflet { fill: var(--belly); }
+.fe-bec { fill: var(--beak); } .fe-oeil { fill: var(--fe-ink); }
+.fe-pattes { fill: none; stroke: var(--fe-legs); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.specimen-svg { overflow: visible; }
+.specimen-svg :is(.fe-corps, .fe-aile, .fe-ventre, .fe-reflet, .fe-bec) { transition: fill var(--fe-duration-long) var(--fe-ease-in-out), fill-opacity var(--fe-duration-medium) var(--fe-ease-out); }
+
+/* part ii: the plumage, once: the bird starts uncoloured, then each token colours its part, its chip lighting up with it */
+@keyframes dye { from { fill: var(--fe-surface-2); } }
+@keyframes chip-on { from { transform: scale(.4); opacity: .25; } }
+@keyframes guide { 0%, 70% { opacity: .5; stroke-dashoffset: 0; } 100% { opacity: 0; stroke-dashoffset: 0; } }
+.figure[data-part="tokens"] .outline { animation: guide 2.2s var(--fe-ease-out) forwards; }
+.figure[data-part="tokens"] .fe-corps { animation: dye var(--fe-duration-long) var(--fe-ease-out) .15s both; }
+.figure[data-part="tokens"] .fe-aile { animation: dye var(--fe-duration-long) var(--fe-ease-out) .6s both; }
+.figure[data-part="tokens"] :is(.fe-ventre, .fe-reflet) { animation: dye var(--fe-duration-long) var(--fe-ease-out) 1.05s both; }
+.figure[data-part="tokens"] .fe-bec { animation: dye var(--fe-duration-long) var(--fe-ease-out) 1.5s both; }
+.figure[data-part="tokens"] ~ .card .chips li:nth-child(1) .chip { animation: chip-on var(--fe-duration-medium) var(--fe-ease-overshoot) .15s both; }
+.figure[data-part="tokens"] ~ .card .chips li:nth-child(2) .chip { animation: chip-on var(--fe-duration-medium) var(--fe-ease-overshoot) .6s both; }
+.figure[data-part="tokens"] ~ .card .chips li:nth-child(3) .chip { animation: chip-on var(--fe-duration-medium) var(--fe-ease-overshoot) 1.05s both; }
+.figure[data-part="tokens"] ~ .card .chips li:nth-child(4) .chip { animation: chip-on var(--fe-duration-medium) var(--fe-ease-overshoot) 1.5s both; }
+
+/* part i: the silhouette draws itself, the colours step back then come again */
+.outline { fill: none; stroke: var(--fe-text); stroke-width: 1.4; stroke-linejoin: round; vector-effect: non-scaling-stroke; opacity: 0; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.figure[data-part="brand"] .outline { animation: trace 2.6s var(--fe-ease-in-out) forwards; }
+.figure[data-part="brand"] .specimen-svg :is(.fe-corps, .fe-aile, .fe-ventre, .fe-reflet, .fe-bec, .fe-oeil) { animation: step-back 2.6s var(--fe-ease-in-out) forwards; }
+@keyframes trace { 0% { opacity: 1; stroke-dashoffset: 1; } 60% { stroke-dashoffset: 0; } 100% { opacity: 1; stroke-dashoffset: 0; } }
+@keyframes step-back { 0%, 100% { fill-opacity: 1; } 15%, 65% { fill-opacity: 0; } }
+/* part iv: the drawn bird gives way to the flock, which takes its shape */
+.figure[data-part="murmuration"] .specimen-svg :is(.fe-corps, .fe-aile, .fe-ventre, .fe-reflet, .fe-bec, .fe-oeil, .fe-pattes) { fill-opacity: .08; stroke-opacity: .2; }
+.figure[data-part="murmuration"] .outline { opacity: .5; stroke-dashoffset: 0; transition: opacity var(--fe-duration-medium) var(--fe-ease-out); }
+/* part iii: the pivot and the arc the wing goes along */
+.pivot { fill: none; stroke: var(--fe-accent); stroke-width: 1.5; stroke-dasharray: 4 5; vector-effect: non-scaling-stroke; opacity: 0; transition: opacity var(--fe-duration-medium) var(--fe-ease-out); }
+.pivot-dot { fill: var(--fe-accent); opacity: 0; transition: opacity var(--fe-duration-medium) var(--fe-ease-out); }
+.figure[data-part="starling"] :is(.pivot, .pivot-dot) { opacity: 1; }
+
+/* ——— Leader lines and their marks on the bird ——— */
+.leader { stroke: var(--fe-text-muted); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke var(--fe-duration-flash) var(--fe-ease-out); }
+.mark { fill: var(--fe-bg); stroke: var(--fe-text-muted); stroke-width: 1.5; vector-effect: non-scaling-stroke; transition: fill var(--fe-duration-flash) var(--fe-ease-out), stroke var(--fe-duration-flash) var(--fe-ease-out); }
+.hit { fill: transparent; cursor: pointer; }
+.leaders .on .leader { stroke: var(--fe-primary); }
+.leaders .on .mark { fill: var(--fe-primary); stroke: var(--fe-primary); }
+.mark-num { font: 500 22px var(--fe-font-code); fill: var(--fe-accent); display: none; }
+
+/* the callouts: a numeral, a name, a package */
+.callout { position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); display: grid; justify-items: start; gap: 0; padding: 6px 10px; border: 0; border-radius: var(--fe-radius-md); background: none; text-align: left; transition: background-color var(--fe-duration-flash) var(--fe-ease-out), transform var(--fe-duration-short) var(--fe-ease-out); }
+.callout.left { transform: translateX(-100%); justify-items: end; text-align: right; }
+.callout b { font-size: clamp(16px, 1.6vw, 20px); font-weight: 700; line-height: 1.2; }
+.callout code { font-size: 12.5px; color: var(--fe-text-muted); }
+.callout[aria-pressed="true"] { background: var(--fe-primary-soft); }
+.callout:active { transform: scale(.97); } .callout.left:active { transform: translateX(-100%) scale(.97); }
+@media (hover: hover) and (pointer: fine) { .callout:hover { background: var(--fe-primary-soft); } }
+
+/* ——— The card ——— */
+.card { position: relative; align-self: center; padding: 20px 22px; border: 1px solid var(--fe-border); border-radius: var(--fe-radius-lg); background: var(--fe-surface); }
+.switch { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: auto; justify-content: space-between; gap: 2px; margin: -6px -8px 16px; padding: 4px; border-radius: var(--fe-radius-md); background: var(--fe-surface-2); }
+.switch button { position: relative; z-index: 1; min-height: 40px; padding: 0 10px; border: 0; border-radius: calc(var(--fe-radius-md) - 2px); background: none; font-size: 14px; font-weight: 700; color: var(--fe-text-muted); white-space: nowrap; transition: color var(--fe-duration-flash) var(--fe-ease-out); }
+.switch button[aria-selected="true"] { color: var(--fe-text); }
+@media (hover: hover) and (pointer: fine) { .switch button:hover { color: var(--fe-text); } }
+/* the pill slides under the open part; a keyboard move is never animated */
+.pill { position: absolute; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: calc(var(--fe-radius-md) - 2px); background: var(--fe-surface); box-shadow: var(--fe-shadow-1), inset 0 0 0 1px var(--fe-border); transition: transform var(--fe-duration-short) var(--fe-ease-in-out), width var(--fe-duration-short) var(--fe-ease-in-out); }
+.pill.instant { transition: none; }
+/* every part's text sits in the same cell: the card keeps the height of the longest, nothing jumps */
+.entries { display: grid; }
+.entry { grid-area: 1 / 1; }
+.entry:not(.active) { visibility: hidden; }
+.entry.active { animation: card-in var(--fe-duration-short) var(--fe-ease-out); }
+@keyframes card-in { from { opacity: 0; transform: translateY(6px); } }
+.label { margin: 0 0 6px; font: 500 14px var(--fe-font-code); color: var(--fe-accent); }
+.card h2 { font-size: 24px; font-weight: 800; line-height: 1.2; margin-bottom: 12px; }
+.card h2 code { font-size: 18px; font-weight: 500; color: var(--fe-text); }
+.version { font: 500 13px var(--fe-font-code); color: var(--fe-text-muted); }
+.card p { margin: 0 0 14px; color: var(--fe-text-muted); }
+.card p code { color: var(--fe-text); font-size: 13px; }
+.chips { list-style: none; display: grid; grid-template-columns: repeat(2, auto); justify-content: start; gap: 8px 20px; margin: 0 0 16px; padding: 0; }
+.chips li { display: flex; align-items: center; gap: 8px; }
+.chips code { font-size: 12.5px; color: var(--fe-text-muted); }
+.chip { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px var(--fe-border); transition: background-color var(--fe-duration-long) var(--fe-ease-in-out); }
+.palette-label { margin: 0 0 8px !important; font: 500 13px var(--fe-font-code); color: var(--fe-text-muted); }
+.palette { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 16px; padding: 0; }
+.palette li span:first-child { display: block; width: 20px; height: 20px; border-radius: 5px; background: var(--c); box-shadow: inset 0 0 0 1px var(--fe-border); }
+.theme { min-height: 40px; margin: 0 0 16px; padding: 0 14px; border: 1px solid var(--fe-border); border-radius: var(--fe-radius-md); background: none; font-size: 14px; font-weight: 700; transition: background-color var(--fe-duration-flash) var(--fe-ease-out), transform var(--fe-duration-short) var(--fe-ease-out); }
+.theme:active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) { .theme:hover { background: var(--fe-surface-2); } }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0 0 16px; font-size: 14px; }
+.facts dt { font: 500 13px var(--fe-font-code); color: var(--fe-text-muted); }
+.facts dd { margin: 0; }
+.links { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.links li { display: flex; gap: 10px; align-items: baseline; }
+.links li::before { content: ''; flex-shrink: 0; width: 7px; height: 9px; background: var(--fe-primary); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.links a { font-weight: 700; }
+
+/* ——— Beyond the plate: the site and the engine first, they live elsewhere; then the pages of this repository ——— */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.beyond { margin-top: clamp(40px, 5vw, 72px); padding-top: 24px; border-top: 1px solid var(--fe-border); }
+.beyond h2 { font-size: clamp(24px, 3vw, 32px); font-weight: 800; }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 20px; margin-top: 24px; }
+.pages { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px; margin-top: 16px; }
+.sub { margin: 40px 0 0; font: 500 14px var(--fe-font-code); color: var(--fe-accent); letter-spacing: 0; }
+.feature, .page { display: flex; flex-direction: column; gap: 6px; padding: 12px 12px 18px; border: 1px solid var(--fe-border); border-radius: var(--fe-radius-lg); color: var(--fe-text); text-decoration: none; transition: border-color var(--fe-duration-flash) var(--fe-ease-out); }
+.feature { background: var(--fe-surface); }
+.feature img, .page img { display: block; width: 100%; height: auto; aspect-ratio: 894 / 487; object-fit: cover; object-position: left top; /* 12 px narrower than the capture: its scrollbar is left out */ margin-bottom: 8px; border-radius: var(--fe-radius-md); box-shadow: inset 0 0 0 1px var(--fe-border); background: var(--fe-surface-2); }
+.feature > :not(img, .cover), .page > :not(img) { padding-inline: 6px; }
+.feature b { font-size: 24px; font-weight: 800; letter-spacing: -.02em; }
+.feature b a { color: inherit; text-decoration: none; } .feature b code { font-size: 22px; font-weight: 500; }
+.page b { font-size: 18px; }
+.feature > span:not(.tag):not(.more), .page > span:last-child { font-size: 15px; color: var(--fe-text-muted); }
+.tag { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; font: 500 13px var(--fe-font-code); color: var(--fe-accent); }
+.tag code { font-size: 12.5px; color: inherit; }
+/* outside this repository: the arrow and the address, as on a link that leaves */
+.away { display: inline-flex; align-items: center; gap: 6px; color: var(--fe-text-muted); }
+.ext { width: 14px; height: 14px; color: currentColor; --fe-picto-accent: currentColor; }
+.more { margin-top: 4px; font-weight: 700; }
+.cover { display: block; }
+@media (hover: hover) and (pointer: fine) { a.feature:hover, article.feature:hover, .page:hover { border-color: var(--fe-primary); } }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; margin-top: 32px; padding-top: 12px; border-top: 1px solid var(--fe-border); }
+
+/* ——— Small screens: the bird, its numbered marks, then the card ——— */
+@media (max-width: 960px) {
+  /* no engraved frame on a phone: the page is the sheet */
+  .sheet { width: auto; margin: 0; padding: 16px; border: 0; outline: 0; }
+  .plate { grid-template-columns: 1fr; }
+  /* the bird stays at the top of the screen, the four parts below it as tabs; the card scrolls underneath */
+  .figure { position: sticky; top: 0; z-index: 2; margin-inline: -8px; padding: 8px 8px 10px; background: var(--fe-bg); border-bottom: 1px solid var(--fe-border); }
+  .figure-art { aspect-ratio: 1; max-height: 46svh; margin-inline: auto; }
+  .callouts { position: static; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 6px; }
+  .callout, .callout.left { position: static; transform: none; justify-items: center; text-align: center; padding: 6px 4px; min-height: 44px; background: var(--fe-surface-2); }
+  .callout:active, .callout.left:active { transform: scale(.97); }
+  .callout b { font-size: 13px; }
+  .callout code { display: none; }
+  .switch { display: none; }
+  .leader { display: none; }
+  .callout[aria-pressed="true"] { background: var(--fe-primary-soft); box-shadow: inset 0 0 0 1.5px var(--fe-primary); }
+  .mark-num { display: block; }
+  .head span:nth-child(2) { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry.active, .figure[data-part="tokens"] :is(.specimen-svg *, .outline), .chip { animation: none !important; }
+  .theme:active { transform: none; }
+  .pill { transition: none; }
+  .figure[data-part="brand"] .outline { animation: none; opacity: 1; stroke-dashoffset: 0; }
+  .figure[data-part="brand"] .specimen-svg * { animation: none; }
+  .callout, .callout:active { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) and (min-width: 961px) {
+  .callout.left, .callout.left:active { transform: translateX(-100%); }
+}

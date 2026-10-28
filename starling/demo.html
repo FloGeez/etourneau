@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The articulated starling — demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<style>
+/* Colours, fonts and themes: ../tokens/tokens.css */
+:root { --gutter: clamp(16px, 5vw, 120px); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fe-bg); color: var(--fe-text); font-family: var(--fe-font-heading); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+.page { max-width: 1200px; margin-inline: auto; padding-inline: var(--gutter); padding-block: clamp(32px, 6vw, 72px) 64px; }
+:focus-visible { outline: 3px solid var(--fe-focus); outline-offset: 3px; border-radius: 6px; }
+
+.fe-body { fill: var(--fe-logo-body); }
+.fe-wing { fill: var(--fe-logo-wing); }
+.fe-wing-far { fill: var(--fe-logo-wing-far); }
+.fe-belly, .fe-highlight { fill: var(--fe-logo-belly); }
+.fe-beak { fill: var(--fe-logo-beak); }
+.fe-eye { fill: var(--fe-ink); }
+.fe-legs { fill: none; stroke: var(--fe-legs); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.fe-wire { fill: none; stroke: var(--fe-text); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.scene-label { font: 400 13px var(--fe-font-code); fill: var(--fe-text-muted); }
+
+.eyebrow { font: 500 14px var(--fe-font-code); color: var(--fe-accent); margin: 0 0 16px; }
+h1 { margin: 0; font-size: clamp(40px, 7vw, 72px); font-weight: 800; letter-spacing: -0.045em; line-height: 1; text-wrap: balance; max-width: 14ch; }
+.intro { margin: 24px 0 0; max-width: 52ch; font-size: clamp(16px, 1.6vw, 20px); color: var(--fe-text-muted); text-wrap: pretty; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+.button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1.5px solid var(--fe-border); background: transparent; color: var(--fe-text); font: 700 15px var(--fe-font-heading); cursor: pointer; }
+.button:hover { border-color: var(--fe-primary); }
+.button[aria-pressed="true"] { background: var(--fe-primary); border-color: var(--fe-primary); color: var(--fe-on-primary); }
+.button svg { width: 16px; height: 16px; fill: currentColor; }
+
+.scene { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 64px); align-items: center; padding-block: clamp(48px, 7vw, 88px); border-top: 1px solid var(--fe-border); }
+.scene:first-of-type { margin-top: clamp(40px, 6vw, 72px); }
+.stage svg { display: block; width: 100%; height: auto; overflow: visible; }
+.text > * { margin: 0; }
+.kind { font: 500 14px var(--fe-font-code); color: var(--fe-accent); }
+.text h2 { margin-top: 8px; font-size: 32px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; text-wrap: balance; }
+.text p.desc { margin-top: 12px; font-size: 18px; color: var(--fe-text-muted); max-width: 44ch; }
+.recipe { list-style: none; padding: 0; margin-top: 24px; display: grid; gap: 8px; font: 400 14px/1.5 var(--fe-font-code); color: var(--fe-text); max-width: 48ch; }
+.recipe li { display: flex; gap: 12px; align-items: baseline; }
+.recipe li::before { content: ''; flex-shrink: 0; width: 7px; height: 9px; background: var(--fe-primary); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.text .controls { margin-top: 24px; }
+
+.uses { padding-block: clamp(48px, 7vw, 88px) 0; border-top: 1px solid var(--fe-border); display: grid; grid-template-columns: minmax(200px, 300px) minmax(0, 1fr); gap: clamp(24px, 5vw, 64px); }
+.uses h2 { margin: 0; font: 500 14px var(--fe-font-code); color: var(--fe-accent); }
+.hooks { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--fe-border); }
+.hooks li { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 20px; padding: 14px 0; border-top: 1px solid var(--fe-border); }
+.hooks b { font-weight: 800; }
+.hooks span { color: var(--fe-text-muted); }
+.hooks code { font: 400 14px var(--fe-font-code); color: var(--fe-text); }
+
+@media (max-width: 860px) {
+  .scene, .uses { grid-template-columns: 1fr; }
+  .text h2 { font-size: 24px; }
+  .text p.desc { font-size: 16px; }
+  .hooks li { grid-template-columns: 1fr; gap: 4px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <p class="eyebrow">guidelines · motion · profile only</p>
+    <h1>The starling comes to life.</h1>
+    <p class="intro">The same bird, cut into parts: wing, body, legs, eye. Each gesture rotates these parts around their joints instead of swapping two drawings, which gives continuous motion.</p>
+    <div class="controls">
+      <button class="button" id="slow" type="button" aria-pressed="false">Slow motion ×¼</button>
+      <button class="button" id="pause" type="button" aria-pressed="false">Pause</button>
+    </div>
+  </header>
+
+  <section class="scene" id="s-wing" aria-labelledby="t-wing">
+    <div class="stage"><svg id="p-wing" viewBox="0 0 640 260" role="img" aria-label="Two starlings on the wire raise a wing: on the left the site's previous version, on the right the proposal."></svg></div>
+    <div class="text">
+      <p class="kind">on the site · the shot</p>
+      <h2 id="t-wing">Raising the wing</h2>
+      <p class="desc">Before, the folded wing disappeared and another wing appeared behind the body: the arm switched sides. Here, the same wing, on the viewer's side, passes in front of the belly and rises, like an arm being raised. It stays in front from start to finish.</p>
+      <ul class="recipe">
+        <li>pivot at the shoulder (96, 100), −185° rotation</li>
+        <li>100 ms anticipation, 550 ms rise, slight overshoot</li>
+        <li>the wing stays in the foreground, never behind the body</li>
+        <li>the body leans back 3° as a counterweight</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s-flap" aria-labelledby="t-flap">
+    <div class="stage"><svg id="p-flap" viewBox="0 0 640 260" role="img" aria-label="Two hovering starlings flap their wings: on the left the previous version, on the right the proposal."></svg></div>
+    <div class="text">
+      <p class="kind">on the site · the take-off and the return to the nest</p>
+      <h2 id="t-flap">Flapping the wings</h2>
+      <p class="desc">The wing's points slide from one pose to the other, and the wing tip follows with a lag. A real starling alternates flapping and gliding.</p>
+      <ul class="recipe">
+        <li>4.2 beats per second, driven by time</li>
+        <li>downstroke 42% of the cycle, upstroke 58%</li>
+        <li>wing tip lag: 12% of the cycle</li>
+        <li>the body rises by 2 units on each downstroke</li>
+      </ul>
+      <div class="controls" role="group" aria-label="Flight style">
+        <button class="button" id="mode-flap" type="button" aria-pressed="true">Flap</button>
+        <button class="button" id="mode-glide" type="button" aria-pressed="false">Flap and glide</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="s-walk" aria-labelledby="t-walk">
+    <div class="stage"><svg id="p-walk" viewBox="0 0 640 240" role="img" aria-label="A starling walks on the wire, forages with its beak, then turns around."></svg></div>
+    <div class="text">
+      <p class="kind">possible · for tools</p>
+      <h2 id="t-walk">Walking, foraging, turning around</h2>
+      <p class="desc">The starling walks; it does not hop like a sparrow. The feet stay planted while the body moves forward, the leg bends at the heel, and the head follows each step.</p>
+      <ul class="recipe">
+        <li>5 steps per second, 14-unit steps</li>
+        <li>two-segment legs, heel pointing back</li>
+        <li>foraging: tips 30° forward, twice</li>
+        <li>turning around: a small 320 ms hop</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s-takeoff" aria-labelledby="t-takeoff">
+    <div class="stage"><svg id="p-takeoff" viewBox="0 0 640 280" role="img" aria-label="A starling crouches, takes off from the wire, flies a loop and lands again, straightening up."></svg></div>
+    <div class="text">
+      <p class="kind">on the site for landing · take-off possible</p>
+      <h2 id="t-takeoff">Taking off and landing</h2>
+      <p class="desc">The hand-over between the perched bird and the flying bird happens when their silhouettes overlap: wing raised, body leaning 24°. On the way back, it straightens up, squashes a little on the wire, then folds its wing.</p>
+      <ul class="recipe">
+        <li>350 ms crouch, 250 ms push</li>
+        <li>perched → flying hand-over in one frame, wings up</li>
+        <li>approach: glide with raised wings, then straighten up</li>
+        <li>touchdown: 8% squash, wing folded in 450 ms</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s-rest" aria-labelledby="t-rest">
+    <div class="stage"><svg id="p-rest" viewBox="0 0 640 240" role="img" aria-label="Two starlings resting on the wire: they breathe, blink, shake themselves, look behind them or turn around from time to time."></svg></div>
+    <div class="text">
+      <p class="kind">possible · for tools</p>
+      <h2 id="t-rest">Staying alive</h2>
+      <p class="desc">Even still, a bird moves a little. These gestures come at random, several seconds apart, so they never become a loop you can spot.</p>
+      <ul class="recipe">
+        <li>breathing: 1% over 3 s</li>
+        <li>blink: 140 ms, every 2 to 6 s</li>
+        <li>shaking: 300 ms, now and then</li>
+        <li>turning around, or just looking over the shoulder</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s-head" aria-labelledby="t-head">
+    <div class="stage"><svg id="p-head" viewBox="0 0 640 260" role="img" aria-label="The starling on the wire turns its head to look behind it, tilts it, then looks ahead again. Move the pointer over the scene: it looks your way."></svg></div>
+    <div class="text">
+      <p class="kind">on the site · at the shot</p>
+      <h2 id="t-head">Turning the head</h2>
+      <p class="desc">The body stays in profile; only the head turns to look behind. Halfway through the gesture, the beak shows from the front for a split second. Move the pointer over the scene: it looks your way.</p>
+      <ul class="recipe">
+        <li>a separate head: a round skull laid on the silhouette</li>
+        <li>head turn in 130 ms, then held still</li>
+        <li>curious tilt of 8 to 14°, in 250 ms</li>
+        <li>the body and the guidelines do not change</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="uses" aria-labelledby="t-site">
+    <h2 id="t-site">on the site</h2>
+    <ul class="hooks">
+      <li><b>The shot</b><span>A single animated wing, which stays in front of the body, replaces the <code>#aile-pliee</code> / <code>#aile-levee</code> swap. The head follows the ball and turns around if it falls behind.</span></li>
+      <li><b>The scroll take-off</b><span>Scroll drives the path, time drives the wings. The bird flaps while climbing and glides while diving.</span></li>
+      <li><b>The return to the nest</b><span>Approach gliding with raised wings, straighten up, hand-over to the perched bird, squash, fold the wing.</span></li>
+    </ul>
+  </section>
+
+  <section class="uses" aria-labelledby="t-tools">
+    <h2 id="t-tools">possible · tools</h2>
+    <ul class="hooks">
+      <li><b>Loading</b><span>The wire becomes the progress bar; the bird walks on it and forages while it waits.</span></li>
+      <li><b>Waiting, empty state</b><span>A bird at rest: breathing, blinking, a look over the shoulder now and then.</span></li>
+      <li><b>Success</b><span>It raises its wing, the same gesture as the shot.</span></li>
+      <li><b>Arrival, departure</b><span>Landing when a panel opens, taking off when it closes.</span></li>
+      <li><b>Ruled out</b><span>The front view: it pulls the bird towards a penguin and means maintaining a second drawing.</span></li>
+    </ul>
+  </section>
+</div>
+
+<!-- Open through a small local server (npm run serve at the repository root): ES modules do not load over file:// -->
+<script type="module">
+import { clamp, lerp, progress, bump, rotatePoint, closedPath, easings, PERCHED, FLYING, wing, flightWings, flightBob, advanceFlight, blink } from './starling.js';
+(() => {
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs || {}) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+const { smooth, inOut, out, in: easeIn, overshoot } = easings;
+const f = (n) => n.toFixed(2);
+const bez = (P, u) => { const a = 1 - u; return [0, 1].map((k) => a * a * a * P[0][k] + 3 * a * a * u * P[1][k] + 3 * a * u * u * P[2][k] + u * u * u * P[3][k]); };
+let uid = 0;
+
+/* ——— Geometry: everything comes from starling.js ——— */
+const { BODY, BELLY, BEAK, HIPS, FEET, LEG, TOES } = PERCHED;
+// To compare with the site's previous version: the raised wing drawn separately, behind the body, and the two flight images
+const OLD_RAISED_WING = 'M82 116 C70 86 72 46 94 16 C104 2 116 -6 130 -12 C124 8 116 34 114 64 C113 84 108 102 100 116 Z';
+const FOLDED_D = wing(0);
+const NEAR_UP = [[104, 88], [96, 58], [102, 30], [120, 6], [122, 32], [128, 58], [130, 84]];
+const NEAR_DOWN = [[106, 94], [104, 116], [112, 136], [132, 150], [126, 128], [124, 110], [130, 92]];
+const FAR_UP = [[122, 80], [128, 54], [146, 30], [172, 16], [162, 40], [154, 62], [142, 82]];
+const FAR_DOWN = [[126, 92], [134, 112], [148, 124], [170, 132], [160, 118], [152, 104], [146, 90]];
+
+/* ——— The perched bird, articulated ——— */
+function perched(parent) {
+  const id = 'fe' + (uid++);
+  const g = el('g', {}, parent), facing = el('g', {}, g);
+  const legs = el('path', { class: 'fe-legs' }, facing);
+  const body = el('g', {}, facing);
+  const wingBehind = el('path', { class: 'fe-wing' }, body);
+  const cp = el('clipPath', { id }, body); el('path', { d: BODY }, cp);
+  el('path', { class: 'fe-body', d: BODY }, body);
+  // the head: a round, symmetrical skull laid on the silhouette (invisible at rest), which can turn and tilt
+  const skull = el('ellipse', { class: 'fe-body', cx: 119, cy: 58, rx: 21, ry: 21 }, body);
+  const inner = el('g', { 'clip-path': `url(#${id})` }, body);
+  el('path', { class: 'fe-belly', d: BELLY }, inner);
+  const wingFront = el('path', { class: 'fe-wing' }, inner);
+  const head = el('g', {}, body);
+  const beak = el('path', { class: 'fe-beak', d: BEAK }, head);
+  const beakFront = el('path', { class: 'fe-beak', d: 'M114.5 60 L123.5 60 L119 70 Z' }, head); // the beak seen from the front, halfway through the turn
+  const eye = el('g', {}, head);
+  el('circle', { class: 'fe-eye', cx: 125, cy: 54, r: 4.6 }, eye);
+  el('circle', { class: 'fe-highlight', cx: 126.6, cy: 52.6, r: 1.4 }, eye);
+  const wingTop = el('path', { class: 'fe-wing' }, body); // the wing on the viewer's side: in front of the body and the head, beak included
+  const st = { x: 0, y: 0, s: 1, dir: 1, dx: 0, dy: 0, tilt: 0, sx: 1, sy: 1, wing: 0, shut: 0, feet: FEET.map((p) => p.slice()), toes: [0, 0], opacity: 1, old: null, head: 1, lean: 0 };
+  const onBody = (p) => { let x = 104 + (p[0] - 104) * st.sx, y = 150 + (p[1] - 150) * st.sy; [x, y] = rotatePoint([x, y], st.tilt, [104, 150]); return [x + st.dx, y + st.dy]; };
+  const toWorld = (p) => { const q = onBody(p); const x = 104 + (q[0] - 104) * st.dir; return [st.x + st.s * (x - 104), st.y + st.s * (q[1] - 193)]; };
+  function draw() {
+    g.setAttribute('transform', `translate(${f(st.x)} ${f(st.y)}) scale(${st.s}) translate(-104 -193)`);
+    g.style.opacity = st.opacity; g.style.display = st.opacity <= 0 ? 'none' : '';
+    facing.setAttribute('transform', `translate(104 0) scale(${f(st.dir)} 1) translate(-104 0)`);
+    body.setAttribute('transform', `translate(${f(st.dx)} ${f(st.dy)}) rotate(${f(st.tilt)} 104 150) translate(104 150) scale(${st.sx} ${st.sy}) translate(-104 -150)`);
+    let d = '';
+    for (let k = 0; k < 2; k++) {
+      const h = onBody(HIPS[k]); let p = st.feet[k];
+      let vx = p[0] - h[0], vy = p[1] - h[1], dd = Math.hypot(vx, vy);
+      if (dd > LEG) { p = [h[0] + vx * LEG / dd, h[1] + vy * LEG / dd]; vx = p[0] - h[0]; vy = p[1] - h[1]; dd = LEG; }
+      if (dd < LEG - .3) {
+        const hh = Math.sqrt(LEG * LEG / 4 - dd * dd / 4); let nx = -vy / dd, ny = vx / dd; if (nx > 0) { nx = -nx; ny = -ny; }
+        d += `M${f(h[0])} ${f(h[1])}L${f((h[0] + p[0]) / 2 + nx * hh)} ${f((h[1] + p[1]) / 2 + ny * hh)}L${f(p[0])} ${f(p[1])}`;
+      } else d += `M${f(h[0])} ${f(h[1])}L${f(p[0])} ${f(p[1])}`;
+      const a = rotatePoint([p[0] + TOES[0][0], p[1] + TOES[0][1]], st.toes[k], p), b = rotatePoint([p[0] + TOES[1][0], p[1] + TOES[1][1]], st.toes[k], p);
+      d += `M${f(a[0])} ${f(a[1])}L${f(p[0])} ${f(p[1])}L${f(b[0])} ${f(b[1])}`;
+    }
+    legs.setAttribute('d', d);
+    if (st.old) {
+      // The site's previous version: swap the drawings, then rotate the raised wing from −150°.
+      wingFront.setAttribute('d', FOLDED_D); wingFront.style.opacity = st.old.cocked ? 0 : 1;
+      wingBehind.setAttribute('d', OLD_RAISED_WING); wingBehind.setAttribute('transform', `rotate(${f(st.old.angle)} 96 100)`); wingBehind.style.opacity = st.old.cocked ? 1 : 0;
+      wingTop.style.opacity = 0;
+    } else {
+      const dW = wing(st.wing);
+      // at rest: the folded wing cut out of the body (as in the guidelines); as soon as it moves, the same wing comes to the front
+      wingFront.setAttribute('d', dW); wingFront.style.opacity = 1;
+      wingBehind.style.opacity = 0;
+      wingTop.setAttribute('d', dW); wingTop.style.opacity = smooth(Math.abs(st.wing) / .12);
+    }
+    const tH = `rotate(${f(st.lean)} 119 74) translate(119 0) scale(${f(st.head)} 1) translate(-119 0)`;
+    head.setAttribute('transform', tH); skull.setAttribute('transform', tH);
+    const ah = Math.abs(st.head);
+    beak.style.opacity = clamp((ah - .12) / .3, 0, 1); beakFront.style.opacity = 1 - clamp(ah / .4, 0, 1);
+    eye.setAttribute('transform', `translate(125 54) scale(1 ${f(1 - .9 * clamp(st.shut, 0, 1))}) translate(-125 -54)`);
+  }
+  return { st, draw, toWorld };
+}
+
+/* ——— The flying bird, articulated ——— */
+function flying(parent) {
+  const id = 'fv' + (uid++);
+  const g = el('g', {}, parent), inner = el('g', {}, g);
+  const far = el('path', { class: 'fe-wing-far' }, inner);
+  const cp = el('clipPath', { id }, inner); el('path', { d: FLYING.BODY }, cp);
+  el('path', { class: 'fe-body', d: FLYING.BODY }, inner);
+  const cl = el('g', { 'clip-path': `url(#${id})` }, inner); el('path', { class: 'fe-belly', d: FLYING.BELLY }, cl);
+  const near = el('path', { class: 'fe-wing' }, inner);
+  el('path', { class: 'fe-beak', d: 'M166 80 L198 88 L167 94 Z' }, inner);
+  el('circle', { class: 'fe-eye', cx: 156, cy: 80, r: 4.4 }, inner);
+  el('circle', { class: 'fe-highlight', cx: 157.6, cy: 78.6, r: 1.3 }, inner);
+  const st = { x: 0, y: 0, s: 1, rot: 0, c: 0, glide: 0, glideAt: .3, opacity: 1, old: null, bob: true };
+  function draw() {
+    const bob = st.bob ? flightBob(st.c, st.glide) : 0;
+    g.setAttribute('transform', `translate(${f(st.x)} ${f(st.y)}) rotate(${f(st.rot)}) scale(${st.s}) translate(-114 ${f(-80 + bob)})`);
+    g.style.opacity = st.opacity; g.style.display = st.opacity <= 0 ? 'none' : '';
+    if (st.old !== null) {
+      near.setAttribute('d', closedPath(st.old ? NEAR_UP : NEAR_DOWN)); far.setAttribute('d', closedPath(st.old ? FAR_UP : FAR_DOWN));
+      return;
+    }
+    const w = flightWings(st.c, st.glide, st.glideAt);
+    near.setAttribute('d', w.near); far.setAttribute('d', w.far);
+  }
+  const place = (world, local) => { // puts the local point (the bird's frame) on the world point
+    const q = rotatePoint([(local[0] - 114) * st.s, (local[1] - 80) * st.s], st.rot, [0, 0]);
+    st.x = world[0] - q[0]; st.y = world[1] - q[1];
+  };
+  return { st, draw, place };
+}
+
+const wire = (svg, d) => el('path', { class: 'fe-wire', d }, svg);
+const label = (svg, x, y, text) => { const t = el('text', { class: 'scene-label', x, y, 'text-anchor': 'middle' }, svg); t.textContent = text; };
+
+/* ——— Scene 1: raising the wing ——— */
+const scenes = [];
+(() => {
+  const svg = document.getElementById('p-wing');
+  wire(svg, 'M0 212 Q320 222 640 212');
+  const before = perched(svg), after = perched(svg);
+  Object.assign(before.st, { x: 190, y: 216.2, s: .95, old: { cocked: false, angle: -150 } });
+  Object.assign(after.st, { x: 450, y: 216.2, s: .95 });
+  label(svg, 190, 250, 'previous site'); label(svg, 450, 250, 'proposal');
+  const D = 3.8;
+  scenes.push({ svg, t: 0, update(dt) {
+    this.t = (this.t + dt) % D; const t = this.t;
+    // Before: swap, then a 650 ms rotation, then swap again when folding
+    const o = before.st.old;
+    o.cocked = t >= .5 && t < 2.3; o.angle = -150 * (1 - inOut(progress(t, .5, 1.15)));
+    before.st.shut = blink(t, 3.2);
+    // After: anticipation, rise with overshoot, hold, fold, settle
+    const s = after.st;
+    if (t < .5) s.wing = -.05 * easeIn(progress(t, .4, .5));
+    else if (t < 2.3) s.wing = -.05 + 1.05 * overshoot(progress(t, .5, 1.05), 1.3);
+    else s.wing = 1 - inOut(progress(t, 2.3, 2.75));
+    s.tilt = -3 * smooth(progress(t, .45, .9)) * (1 - smooth(progress(t, 2.3, 2.7)));
+    s.dy = 1.2 * bump(progress(t, .4, .6)) - 1.5 * smooth(progress(t, .5, .9)) * (1 - smooth(progress(t, 2.3, 2.7))) + 1.4 * bump(progress(t, 2.72, 2.95));
+    s.sy = 1 - .025 * bump(progress(t, 2.72, 2.95)); s.sx = 1 + .012 * bump(progress(t, 2.72, 2.95));
+    s.shut = blink(t, 3.2);
+    before.draw(); after.draw();
+  } });
+})();
+
+/* ——— Scene 2: flapping the wings ——— */
+let gliding = false;
+(() => {
+  const svg = document.getElementById('p-flap');
+  wire(svg, 'M0 222 Q320 232 640 222');
+  const before = flying(svg), after = flying(svg);
+  Object.assign(before.st, { s: 1.05, rot: -6, old: true, bob: false });
+  Object.assign(after.st, { s: 1.05, rot: -6 });
+  label(svg, 190, 250, 'previous site'); label(svg, 450, 250, 'proposal');
+  let acc = 0, pattern = 0;
+  scenes.push({ svg, t: 0, update(dt) {
+    this.t += dt; const t = this.t;
+    const hover = (k) => 4 * Math.sin(t * 1.4 + k);
+    before.st.x = 180; before.st.y = 118 + hover(0);
+    acc += dt; if (acc > .085) { acc = 0; before.st.old = !before.st.old; }
+    const s = after.st; s.x = 440; s.y = 118 + hover(1.3);
+    // flap and glide: five beats (1.2 s), then a 1.2 s glide
+    pattern = (pattern + dt) % 2.4;
+    advanceFlight(s, dt, gliding && pattern > 1.2 ? 1 : 0);
+    s.glideAt = .3;
+    before.draw(); after.draw();
+  } });
+  const bFlap = document.getElementById('mode-flap'), bGlide = document.getElementById('mode-glide');
+  const choose = (g) => { gliding = g; bFlap.setAttribute('aria-pressed', String(!g)); bGlide.setAttribute('aria-pressed', String(g)); pattern = 0; };
+  bFlap.addEventListener('click', () => choose(false)); bGlide.addEventListener('click', () => choose(true));
+})();
+
+/* ——— Scene 3: walking ——— */
+(() => {
+  const svg = document.getElementById('p-walk');
+  wire(svg, 'M0 206 L640 206');
+  const o = perched(svg); const s = o.st;
+  Object.assign(s, { x: 110, y: 206, s: .72 });
+  const STEP = 14, SPEED = 70; // local units: step, speed (5 steps / s)
+  const program = [['walk', 330], ['forage'], ['walk', 520], ['turn'], ['walk', 380], ['forage'], ['walk', 110], ['turn']];
+  let i = 0, tA = 0, dist = 0, start = null;
+  scenes.push({ svg, t: 0, update(dt) {
+    this.t += dt; tA += dt;
+    const [action, target] = program[i];
+    const next = () => { i = (i + 1) % program.length; tA = 0; start = s.feet.map((p) => p.slice()); };
+    s.shut = blink(this.t % 4.3, 3.9);
+    if (action === 'walk') {
+      const dir = Math.sign(target - s.x) || 1, left = Math.abs(target - s.x);
+      const advance = Math.min(left, SPEED * s.s * dt * smooth(tA / .15));
+      s.x += dir * advance; dist += advance / s.s;
+      for (let k = 0; k < 2; k++) {
+        const c = ((dist / (2 * STEP)) + k * .5) % 1;
+        let ox, lift;
+        if (c < .5) { ox = STEP / 2 - STEP * (c / .5); lift = 0; s.toes[k] = 0; }
+        else { const u = (c - .5) / .5; ox = -STEP / 2 + STEP * smooth(u); lift = 7 * Math.sin(Math.PI * u); s.toes[k] = 22 * Math.sin(Math.PI * u); }
+        s.feet[k] = [FEET[k][0] + ox, FEET[k][1] - lift];
+      }
+      const p = (dist / STEP) % 1;
+      s.tilt = 2.5 * Math.sin(2 * Math.PI * p) + 2; s.dy = 1.4 * (1 - Math.cos(2 * Math.PI * p)) / 2;
+      if (left - advance <= .01) next();
+    } else {
+      // bring the feet back under the body in one small step
+      if (start) { const u = smooth(progress(tA, 0, .14)); s.feet = start.map((p, k) => [lerp(p[0], FEET[k][0], u), lerp(p[1], FEET[k][1], u) - 4 * bump(u) * (k === 0 ? 1 : 0)]); if (u >= 1) start = null; }
+      s.dy = lerp(s.dy, 0, 1 - Math.exp(-dt * 14));
+      if (action === 'forage') {
+        const u = tA - .15, first = bump(progress(u, 0, .34)), second = bump(progress(u, .42, .76));
+        s.tilt = lerp(2, 0, progress(tA, 0, .15)) + 30 * Math.pow(Math.max(first, second), .7);
+        s.dy = 4 * Math.max(first, second);
+        if (tA > 1.25) next();
+      } else {
+        const u = progress(tA, .1, .42);
+        if (u > 0 && s._from == null) s._from = s.dir;
+        const d0 = s._from ?? s.dir;
+        s.dir = d0 * Math.cos(Math.PI * inOut(u)); if (Math.abs(s.dir) < .06) s.dir = .06 * Math.sign(s.dir || -d0);
+        s.dy = -9 * bump(u); s.tilt = lerp(s.tilt, -4 * bump(u), .3);
+        s.feet = FEET.map((p) => [p[0], p[1] - 5 * bump(u)]); s.toes = [18 * bump(u), 18 * bump(u)];
+        if (tA > .6) { s.dir = -d0; s._from = null; s.toes = [0, 0]; next(); }
+      }
+    }
+    o.draw();
+  } });
+})();
+
+/* ——— Scene 4: taking off and landing ——— */
+(() => {
+  const svg = document.getElementById('p-takeoff');
+  wire(svg, 'M0 250 Q320 262 640 250');
+  const P = perched(svg), F = flying(svg);
+  const X = 200, Y = 250 + 24 * .3125 * (1 - .3125);
+  const S = .7;
+  Object.assign(P.st, { x: X, y: Y, s: S }); Object.assign(F.st, { s: S, opacity: 0 });
+  const D = 8.4; let start = null;
+  scenes.push({ svg, t: 0, update(dt) {
+    this.t = (this.t + dt) % D; const t = this.t, p = P.st, v = F.st;
+    // reset the perched bird
+    Object.assign(p, { dx: 0, dy: 0, tilt: 0, sx: 1, sy: 1, wing: 0, toes: [0, 0] });
+    p.feet = FEET.map((q) => q.slice());
+    p.shut = blink(t, .5) + blink(t, 6.9);
+    if (t < 1.6) {
+      p.opacity = 1; v.opacity = 0;
+      const a = inOut(progress(t, 1, 1.35)), b = out(progress(t, 1.35, 1.6));
+      p.dy = 7 * a - 34 * b; p.tilt = 10 * a + 16 * b; p.wing = .18 * a + .8 * b;
+      p.toes = [25 * b, 25 * b];
+      if (t >= 1.45) start = P.toWorld(PERCHED.CHEST);
+    } else if (t < 5.2) {
+      p.opacity = 0;
+      p.dy = -34; p.tilt = 26; p.wing = .98;
+      v.opacity = 1;
+      if (t < 3.1) {
+        const u = progress(t, 1.6, 3.1), uu = Math.pow(u, 1.35);
+        const S0 = start || P.toWorld(PERCHED.CHEST);
+        const B = [S0, [S0[0] + 70, S0[1] - 70], [520, 30], [740, -20]];
+        const q = bez(B, uu), q2 = bez(B, Math.min(1, uu + .01));
+        const angle = Math.atan2(q2[1] - q[1], q2[0] - q[0]) * 180 / Math.PI;
+        v.rot = lerp(-24, angle * .6, smooth(u * 3)); v.glide = 0; v.bob = true;
+        if (t - dt < 1.6 || u < .01) v.c = 0; else v.c += dt * 5.5;
+        F.place(q, FLYING.CHEST);
+      } else if (t < 3.7) { v.opacity = 0; }
+      else {
+        const u = progress(t, 3.7, 5.2), uu = out(u);
+        const E = [X + 15, Y - 70]; // the perched bird's chest at the hand-over
+        const B = [[-90, 40], [120, 10], [E[0] - 150, E[1] - 40], E];
+        const q = bez(B, uu), q2 = bez(B, Math.min(1, uu + .01));
+        const angle = Math.atan2(q2[1] - q[1], q2[0] - q[0]) * 180 / Math.PI;
+        v.glide = smooth(progress(t, 4.35, 4.65)); v.glideAt = .05;
+        v.rot = lerp(angle * .6, -30, inOut(progress(t, 4.55, 5.15)));
+        if (v.glide < .6) v.c += dt * 4.6;
+        F.place(q, FLYING.CHEST);
+      }
+    } else {
+      // hand-over to the perched bird, wing raised, leaning like the flying bird
+      v.opacity = 0;
+      p.opacity = 1;
+      const drop = easeIn(progress(t, 5.2, 5.42)), touch = progress(t, 5.42, 5.8), fold = inOut(progress(t, 5.5, 5.95));
+      p.dy = -16 * (1 - drop) + 4 * bump(touch) * (1 - touch * .4);
+      p.tilt = 18 - 18 * overshoot(progress(t, 5.3, 5.85), 2.2);
+      p.sy = 1 - .08 * bump(touch); p.sx = 1 + .04 * bump(touch);
+      p.wing = 1 - fold;
+      p.feet = FEET.map((q) => [q[0] + 8 * (1 - drop), q[1]]);
+      p.toes = [20 * (1 - drop), 20 * (1 - drop)];
+      // shake
+      const e = progress(t, 7.2, 7.5); if (e > 0 && e < 1) { const w = Math.sin(e * Math.PI * 6) * bump(e); p.sx = 1 + .05 * bump(e); p.tilt += 3 * w; }
+    }
+    P.draw(); F.draw();
+  } });
+})();
+
+/* ——— Scene 5: at rest ——— */
+(() => {
+  const svg = document.getElementById('p-rest');
+  wire(svg, 'M0 206 Q320 216 640 206');
+  const birds = [[230, 1, .8], [410, -1, .72]].map(([x, dir, sc], k) => {
+    const o = perched(svg); Object.assign(o.st, { x, y: 206 + 40 * (x / 640) * (1 - x / 640), s: sc, dir });
+    return { o, k, nextBlink: 1 + k * 1.3, blinkAt: -1, nextGesture: 3.5 + k * 2.4, gesture: null, tg: 0 };
+  });
+  scenes.push({ svg, t: 0, update(dt) {
+    this.t += dt; const t = this.t;
+    for (const b of birds) {
+      const s = b.o.st;
+      s.sy = 1 + .01 * Math.sin(t * 2 * Math.PI / 3 + b.k * 1.7); s.sx = 1; s.dy = 0; s.tilt = 0; s.feet = FEET.map((p) => p.slice()); s.toes = [0, 0];
+      if (t > b.nextBlink) { b.blinkAt = t; b.nextBlink = t + 2 + Math.random() * 4; if (Math.random() < .25) b.nextBlink = t + .3; }
+      s.shut = blink(t, b.blinkAt);
+      if (!b.gesture && t > b.nextGesture) { const r = Math.random(); b.gesture = r < .3 ? 'shake' : r < .55 ? 'turn' : 'look'; b.tg = 0; b.d0 = s.dir; }
+      if (b.gesture) {
+        b.tg += dt; const tg = b.tg;
+        if (b.gesture === 'shake') {
+          const e = progress(tg, 0, .32), w = Math.sin(e * Math.PI * 6) * bump(e);
+          s.sx = 1 + .05 * bump(e); s.sy *= 1 + .03 * bump(e); s.tilt = 3 * w; s.dy = -1.5 * bump(e);
+          if (tg > .32) b.gesture = null;
+        } else if (b.gesture === 'look') {
+          const away = inOut(progress(tg, 0, .13)), back = inOut(progress(tg, 1.5, 1.63));
+          s.head = 1 - 2 * away + 2 * back; s.lean = 12 * bump(progress(tg, .55, 1.3));
+          if (tg > 1.63) { s.head = 1; s.lean = 0; b.gesture = null; }
+        } else {
+          const u = progress(tg, 0, .32);
+          s.dir = b.d0 * Math.cos(Math.PI * inOut(u)); if (Math.abs(s.dir) < .06) s.dir = .06 * Math.sign(s.dir || -b.d0);
+          s.dy = -9 * bump(u); s.feet = FEET.map((p) => [p[0], p[1] - 5 * bump(u)]); s.toes = [18 * bump(u), 18 * bump(u)];
+          if (tg > .32) { s.dir = -b.d0; s.toes = [0, 0]; b.gesture = null; }
+        }
+        if (!b.gesture) b.nextGesture = t + 3 + Math.random() * 5;
+      }
+      b.o.draw();
+    }
+  } });
+})();
+
+/* ——— Scene 6: turning the head ——— */
+(() => {
+  const svg = document.getElementById('p-head');
+  wire(svg, 'M0 222 Q320 232 640 222');
+  const X = 320, Y = 227, o = perched(svg), s = o.st;
+  Object.assign(s, { x: X, y: Y, s: .95 });
+  const D = 7.4;
+  // the program: [start, head direction, tilt]
+  const looks = [[0, 1, 0], [1, -1, 0], [2.1, -1, 14], [2.9, -1, 0], [3.3, 1, 0], [4.1, 1, -10], [4.6, 1, 0], [5.3, -1, 0], [5.65, 1, 0], [6.3, 1, 8], [6.9, 1, 0]];
+  let pointer = null;
+  svg.addEventListener('pointermove', (e) => { const r = svg.getBoundingClientRect(); pointer = [(e.clientX - r.left) / r.width * 640, (e.clientY - r.top) / r.height * 260]; });
+  svg.addEventListener('pointerleave', () => { pointer = null; });
+  let toHead = 1, toLean = 0, fromHead = 1, tHead = 0, fromLean = 0, tLean = 1;
+  scenes.push({ svg, t: 0, update(dt) {
+    this.t = (this.t + dt) % D; const t = this.t;
+    let th, tl;
+    if (pointer) { th = pointer[0] < X - 20 ? -1 : 1; tl = clamp((pointer[1] - 120) / 8, -12, 12) * th; }
+    else { const r = looks.filter((g) => g[0] <= t).pop(); th = r[1]; tl = r[2]; }
+    // a bird turns its head in one snap (130 ms), then holds it still
+    if (th !== toHead) { fromHead = s.head; toHead = th; tHead = 0; }
+    tHead += dt; s.head = lerp(fromHead, toHead, inOut(tHead / .13));
+    if (tl !== toLean) { fromLean = s.lean; toLean = tl; tLean = 0; }
+    tLean += dt; s.lean = lerp(fromLean, toLean, inOut(tLean / .25));
+    s.shut = blink(t, .5) + blink(t, 2.5) + blink(t, 5.9);
+    s.sy = 1 + .01 * Math.sin(this.t * 2 * Math.PI / 3);
+    o.draw();
+  } });
+})();
+
+/* ——— Loop ——— */
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let speed = 1, paused = reduced;
+const bPause = document.getElementById('pause'), bSlow = document.getElementById('slow');
+const updatePause = () => { bPause.setAttribute('aria-pressed', String(paused)); bPause.textContent = paused ? 'Play' : 'Pause'; };
+updatePause();
+bPause.addEventListener('click', () => { paused = !paused; updatePause(); });
+bSlow.addEventListener('click', () => { speed = speed === 1 ? .25 : 1; bSlow.setAttribute('aria-pressed', String(speed !== 1)); });
+for (const sc of scenes) { sc.visible = true; sc.update(0.0001); }
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => { for (const e of entries) { const sc = scenes.find((s) => s.svg === e.target); if (sc) sc.visible = e.isIntersecting; } });
+  scenes.forEach((s) => io.observe(s.svg));
+}
+let prev = null;
+const loop = (now) => {
+  const dt = prev === null ? 0 : Math.min(.05, (now - prev) / 1000); prev = now;
+  if (!paused) for (const sc of scenes) if (sc.visible) sc.update(dt * speed);
+  requestAnimationFrame(loop);
+};
+requestAnimationFrame(loop);
+})();
+</script>
+</body></html>

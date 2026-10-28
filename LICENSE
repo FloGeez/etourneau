@@ -1,0 +1,58 @@
+Florian Etourneau — etourneau brand and design system
+Copyright (c) 2026 Florian Etourneau
+
+This repository is public to be read, not to be reused as is. It contains two things, under two regimes.
+
+
+1. THE IDENTITY — ALL RIGHTS RESERVED
+
+Florian Etourneau's visual identity is protected by copyright. It includes:
+
+- the starling, in all its poses and variants (logo, head, perched, flying, cocked to shoot, articulated
+  into parts), and the family on the wire;
+- the images in logo/, illustrations/, avatars/, favicon/ and profile/, and the icons in icons/ (the SVGs
+  and the sprite);
+- the brand guidelines (charte/);
+- the texts (README.md);
+- the name "Florian Etourneau" used as a signature, and the whole formed by the palette, the typefaces
+  and the motifs (the point, the wire, the murmuration);
+- the identity's paths, shapes and values contained in the code: the starling's silhouettes and parts,
+  the shapes drawn by the murmuration, the token values (tokens/tokens.json and tokens.css).
+
+You may view them here. Any reproduction, modification, adaptation or distribution, in whole or in part,
+requires the author's written consent: florian.etourneau@gmail.com.
+
+
+2. THE CODE — MIT LICENSE
+
+The code in this repository is under the MIT license: the scripts (scripts/), the starling (starling/*.js)
+and the murmuration (murmuration/*.js), and the code of the demo pages.
+
+The license covers the code, not what it draws: the identity's paths and values it contains remain
+subject to part 1. To reuse the code, replace them with your own.
+
+    MIT License
+
+    Copyright (c) 2026 Florian Etourneau
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+    associated documentation files (the "Software"), to deal in the Software without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
+    following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial
+    portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+    LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
+    EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+    IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+3. THIRD-PARTY MARKS AND WORKS
+
+The third-party names and logos mentioned or depicted (MaxDS, BPGO, former employers, GitHub, LinkedIn…)
+belong to their owners; they appear here for reference. The Bricolage Grotesque and JetBrains Mono fonts
+are under the SIL Open Font License and loaded from Google Fonts, not redistributed.

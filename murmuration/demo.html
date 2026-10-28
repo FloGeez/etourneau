@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The murmuration — demo</title>
+<link rel="stylesheet" href="../tokens/tokens.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;min-height:100vh;background:var(--fe-bg);color:var(--fe-text);font-family:var(--fe-font-heading)}
+canvas{position:fixed;inset:0;pointer-events:none}
+main{position:relative;display:grid;grid-template-columns:minmax(0,340px) minmax(0,720px);gap:48px;align-items:center;min-height:100vh;padding:32px;box-sizing:border-box;max-width:1200px;margin:0 auto}
+nav{display:flex;flex-direction:column;gap:8px}
+button{font:inherit;font-weight:700;font-size:16px;text-align:left;min-height:44px;padding:0 16px;border-radius:var(--fe-radius-md);border:1.5px solid var(--fe-border);background:transparent;color:var(--fe-text);cursor:pointer}
+button[aria-pressed=true]{background:var(--fe-surface);border-color:var(--fe-primary)}
+button:focus-visible{outline:3px solid var(--fe-focus);outline-offset:3px}
+#perch{aspect-ratio:9/8;border:1.5px dashed var(--fe-border);border-radius:var(--fe-radius-lg)}
+h1{font-size:48px;letter-spacing:-.045em;line-height:1;margin:0 0 16px}
+p{color:var(--fe-text-muted);margin:0 0 24px}
+@media (max-width:760px){main{grid-template-columns:1fr}}
+</style></head>
+<body>
+<canvas id="murmuration" aria-hidden="true"></canvas>
+<main>
+<div><h1>The murmuration</h1><p>The birds land in the chosen shape: a tight outline, a sparse inside. Shy birds fly off when the pointer comes close.</p><nav id="nav"></nav></div>
+<div id="perch" role="img" aria-label="Area where the murmuration draws the shape"></div>
+</main>
+<!-- Open through a small local server (npm run serve at the repository root): ES modules do not load over file:// -->
+<!-- the engine, @flogeez/murmuration, installed by npm install at the repository root -->
+<script type="importmap">{ "imports": { "@flogeez/murmuration": "../node_modules/@flogeez/murmuration/index.js" } }</script>
+<script type="module">
+import { createMurmuration, shapes, sampleShape, fitShape } from './index.js';
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const debug = new URLSearchParams(location.search).has('debug');
+const m = createMurmuration(document.getElementById('murmuration'), { count: 320, colors: [css('--fe-birds'), css('--fe-birds'), css('--fe-birds-2')], debug });
+const box = document.getElementById('perch');
+const origin = () => { const r = box.getBoundingClientRect(); return [r.left + scrollX, r.top + scrollY]; };
+const orbit = () => { const r = box.getBoundingClientRect(); return { x: r.left + scrollX + r.width / 2, y: r.top + scrollY - 12, rx: r.width * 0.3, ry: 22 }; };
+const points = (shape) => fitShape(sampleShape(shape, 300), box.getBoundingClientRect());
+const nav = document.getElementById('nav');
+const actions = [
+  ['Free flight', () => m.fly()],
+  ['The starling', () => m.perch(points(shapes.starling), { rest: 'circle', anchor: origin, zone: orbit })],
+  ['The basket', () => m.perch(points(shapes.basket), { rest: 'circle', anchor: origin, zone: orbit })],
+  ['Shy starling', () => m.perch(points(shapes.starling), { rest: 'leave', anchor: origin, shy: true })],
+  ['Scatter', () => m.scatter()],
+];
+actions.forEach(([label, run], i) => {
+  const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.setAttribute('aria-pressed', i === 0);
+  b.onclick = () => { nav.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', x === b)); run(); };
+  nav.append(b);
+});
+</script></body></html>

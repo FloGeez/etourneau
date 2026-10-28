@@ -1,0 +1,47 @@
+{
+  "name": "etourneau",
+  "version": "1.0.0",
+  "description": "Florian Etourneau's brand: the amethyst starling, as files and code. Tokens, the articulated starling, the murmuration, and the drawings.",
+  "author": "Florian Etourneau",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FloGeez/etourneau.git"
+  },
+  "homepage": "https://flogeez.github.io/etourneau/",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    "./tokens.css": "./tokens/tokens.css",
+    "./tokens.json": "./tokens/tokens.json",
+    "./starling": "./starling/index.js",
+    "./murmuration": "./murmuration/index.js",
+    "./logo/*": "./logo/*",
+    "./icons/*": "./icons/*",
+    "./illustrations/*": "./illustrations/*",
+    "./avatars/*": "./avatars/*",
+    "./favicon/*": "./favicon/*"
+  },
+  "files": [
+    "tokens/tokens.css",
+    "tokens/tokens.json",
+    "starling/*.js",
+    "murmuration/*.js",
+    "logo",
+    "icons/*.svg",
+    "illustrations",
+    "avatars",
+    "favicon"
+  ],
+  "dependencies": {
+    "@flogeez/murmuration": "^0.1.4"
+  },
+  "scripts": {
+    "tokens": "node scripts/tokens.mjs",
+    "sprite": "node scripts/sprite.mjs",
+    "profile": "node scripts/profile.mjs",
+    "serve": "npx serve ."
+  }
+}

@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- Source de github.png (1280 × 640) : l’aperçu du dépôt FloGeez/etourneau quand on partage son lien (Settings → Social preview).
+     La nuée dessine l’étourneau avec etourneau/murmuration. Réexporter : npm run serve, puis une capture de la page à 1280 × 640. -->
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=JetBrains+Mono:wght@500&display=block" />
+<style>
+  html, body { margin: 0; width: 1280px; height: 640px; overflow: hidden; background: var(--fe-bg); color: var(--fe-text); }
+  .texte { position: absolute; left: 80px; top: 120px; }
+  .surtitre { font-family: var(--fe-font-code); font-size: 22px; font-weight: 500; color: var(--fe-accent); margin: 0 0 24px; }
+  h1 { font-family: var(--fe-font-heading); margin: 0; font-size: 72px; font-weight: 800; letter-spacing: var(--fe-tracking-display); line-height: 1.02; }
+  h1 span { display: block; color: var(--fe-primary); }
+  .paquets { position: absolute; left: 80px; top: 400px; margin: 0; font-family: var(--fe-font-code); font-size: 22px; font-weight: 500; color: var(--fe-text-muted); }
+  #nuee { position: absolute; left: 700px; top: 40px; width: 540px; height: 540px; }
+  .fil { position: absolute; inset: 0; }
+</style>
+</head>
+<body>
+<div class="texte">
+  <p class="surtitre">github.com/FloGeez/etourneau</p>
+  <h1>The purple starling, <span>as a design system.</span></h1>
+</div>
+<p class="paquets">npm i etourneau</p>
+<svg class="fil" width="1280" height="640" aria-hidden="true"><path d="M0 584 Q640 606 1280 584" fill="none" stroke="var(--fe-text)" stroke-width="2" /></svg>
+<canvas id="nuee" aria-hidden="true"></canvas>
+<!-- the engine, @flogeez/murmuration, installed by npm install at the repository root -->
+<script type="importmap">{ "imports": { "@flogeez/murmuration": "../../node_modules/@flogeez/murmuration/index.js" } }</script>
+<script type="module">
+// la nuée posée en forme d’étourneau : les mêmes points que sur le site (etourneau/murmuration), dessinés une fois
+import { shapes, sampleShape, fitShape } from '../../murmuration/index.js';
+import { PERCHED } from '../../starling/starling.js';
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const c = document.getElementById('nuee'), g = c.getContext('2d'), w = c.clientWidth, h = c.clientHeight, dpr = devicePixelRatio || 1;
+c.width = w * dpr; c.height = h * dpr; g.scale(dpr, dpr);
+const SIL = new Path2D(PERCHED.BODY), S = 0.07, couleurs = [css('--fe-birds'), css('--fe-birds'), css('--fe-birds-2')];
+const box = { width: w, height: h * 0.86 };
+fitShape(sampleShape(shapes.starling, 320), box, { dy: h * 0.1 }).forEach(([x, y], i) => {
+  g.save(); g.translate(x - 104 * S, y - 195 * S); g.scale(S, S); g.fillStyle = couleurs[i % 3]; g.fill(SIL); g.restore();
+});
+// quelques oiseaux encore en vol, qui rejoignent la forme par le haut : la nuée est en train de se poser
+let graine = 11; const hasard = () => ((graine = (graine * 16807) % 2147483647) / 2147483647);
+g.lineCap = 'round'; g.lineJoin = 'round'; g.lineWidth = 1.8;
+for (let i = 0; i < 26; i++) {
+  const x = w * (0.06 + hasard() * 0.5), y = h * (0.02 + hasard() * 0.16), a = (hasard() - 0.5) * 0.5, b = (hasard() - 0.5) * 2.4;
+  g.save(); g.translate(x, y); g.rotate(a); g.strokeStyle = couleurs[i % 3]; g.globalAlpha = 0.55;
+  g.beginPath(); g.moveTo(-5, b); g.quadraticCurveTo(-2.4, -1.2, 0, 0.9); g.quadraticCurveTo(2.4, -1.2, 5, b); g.stroke(); g.restore();
+}
+document.body.dataset.pret = '';
+</script>
+</body>
+</html>

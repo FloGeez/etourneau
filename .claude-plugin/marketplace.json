@@ -1,0 +1,14 @@
+{
+  "name": "etourneau",
+  "description": "Skills for Florian Etourneau's brand: apply the etourneau design system and animate its starlings.",
+  "owner": {
+    "name": "Florian Etourneau"
+  },
+  "plugins": [
+    {
+      "name": "etourneau",
+      "source": "./plugin",
+      "description": "/etourneau:brand (the brand in an app) and /etourneau:murmuration (the flock and the articulated starling)."
+    }
+  ]
+}
