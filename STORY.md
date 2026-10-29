@@ -36,6 +36,6 @@ Four packages, one repository, one consumer: too much to maintain for what it gi
 - **Colours**: "Amethyst & sand" in light, "Night" in dark. Terracotta for the ball and for markers only. Two illustration palettes: the plumage (the family) and the scoreboard.
 - **Type**: Bricolage Grotesque (titles 800, subtitles and labels 700, body 400) and JetBrains Mono 14/500 for markers and code. Scale 14 / 16 / 20 / 24 / 32 / 48 / 72.
 - **Motifs**: the point (the beak's triangle) and the wire.
-- **Icons**: a 24 px grid, a 2 px stroke, a single flat fill, the point. Only exception: GitHub and LinkedIn's official logos.
+- **Icons**: a 24 px grid, a 2 px stroke, a single flat fill, the point. Only exception: the official logos of GitHub, LinkedIn and npm.
 - **Motion**: one bird, in profile only. Its wings beat with time, never with scroll; a gesture driven by scroll never waits for a timed animation. Animations only at the moments of the script, always a static version when motion is reduced.
 - **Tone**: obvious, concrete, collective.

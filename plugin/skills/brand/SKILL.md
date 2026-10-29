@@ -60,7 +60,7 @@ Shadcn's `accent` is a hover background: it maps to `--fe-primary-soft`, not to 
 ## The drawings
 
 - **Logo** (`etourneau/logo/*`): right, left, night, mono, perched (with legs), head only; SVG coloured by the `--fe-logo-*` tokens, PNG next to them. Clear space: a quarter of its height. Minimum 24 px; below that, the head alone. It is never distorted, recoloured, shaded or redrawn as an outline.
-- **Icons** (`etourneau/icons/*`): 29 icons on a 24 px grid, 2 px stroke in `currentColor`, a single filled point in `--fe-picto-accent` (cut-outs in `--fe-picto-bg`): two variables set on a parent, defaulting to the brand purple and white. Use the sprite: `<svg width="24" height="24"><use href="…/sprite.svg#fe-mail"/></svg>`. Only exception: GitHub and LinkedIn's official logos, in one colour, at 18 px.
+- **Icons** (`etourneau/icons/*`): 29 icons on a 24 px grid, 2 px stroke in `currentColor`, a single filled point in `--fe-picto-accent` (cut-outs in `--fe-picto-bg`): two variables set on a parent, defaulting to the brand purple and white. Use the sprite: `<svg width="24" height="24"><use href="…/sprite.svg#fe-mail"/></svg>`. Only exception: the official logos of GitHub, LinkedIn and npm, in one colour (the link's), at 18 px, or at the size of the text they precede.
 - **Illustrations** (`etourneau/illustrations/*`): the shot, cocked, in flight (two), the family on the wire, on the rim, dribble. The same bird as the logo; colours driven by the tokens, so one file serves both themes.
 - **Avatars** (`etourneau/avatars/*`): sand, night, purple, made for a round crop.
 - **Favicons** (`etourneau/favicon/*`): copy the folder into the public folder and paste `favicon/head.html` into the `<head>`.
